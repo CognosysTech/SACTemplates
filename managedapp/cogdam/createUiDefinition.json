@@ -4,60 +4,72 @@
     "version": "0.1.2-preview",
     "parameters": {
         "basics": [
-            {}
+            {
+                "name": "vmName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Virtual Machine name",
+                "toolTip": "The name of the Virtual Machine.",
+                "defaultValue": "cgweb-vm",
+                "constraints": {
+                    "required": true,
+                    "regex": "^[a-z0-9A-Z-]{3,79}$",
+                    "validationMessage": "The VM Name must be between 3 and 79 characters long and contain letters, numbers and hyphens only."
+                }
+            },
+            {
+                "name": "dbvmName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Virtual Machine name",
+                "toolTip": "The name of the Virtual Machine.",
+                "defaultValue": "cgdb-vm",
+                "constraints": {
+                    "required": true,
+                    "regex": "^[a-z0-9A-Z-]{3,79}$",
+                    "validationMessage": "The VM Name must be between 3 and 79 characters long and contain letters, numbers and hyphens only."
+                }
+            },
+            {
+                "name": "adminUsername",
+                "type": "Microsoft.Compute.UserNameTextBox",
+                "label": "Username",
+                "toolTip": "Admin username for the machine",
+                "osPlatform": "Linux",
+                "constraints": {
+                    "required": true
+                }
+            },
+            {
+                "name": "SSHCredentials",
+                "type": "Microsoft.Compute.CredentialsCombo",
+                "label": {
+                    "authenticationType": "Authentication type",
+                    "password": "Password",
+                    "confirmPassword": "Confirm password",
+                    "sshPublicKey": "SSH public key"
+                },
+                "toolTip": {
+                    "authenticationType": "Authentication Type for the Virtual Machine",
+                    "password": "Password for the Virtual Machine",
+                    "sshPublicKey": "SSH Public Key for the Virtual Machine"
+                },
+                "constraints": {
+                    "required": true
+                },
+                "options": {
+                    "hideConfirmation": false
+                },
+                "osPlatform": "Linux"
+            }
         ],
         "steps": [
             {
-                "name": "vmCredentials",
-                "label": "Azure Managed Application",
-                "bladeTitle": "Application credentials",
-                "subLabel": {
-                    "preValidation": "Provide VM credentials",
-                    "postValidation": "Great - let's move on!"
-                },
-                "elements": [
-                    {
-                        "name": "adminUsername",
-                        "type": "Microsoft.Compute.UserNameTextBox",
-                        "label": "Admin username",
-                        "osPlatform": "Linux",
-                        "constraints": {
-                            "required": true
-                        },
-                        "toolTip": "Provide admin username for the virtual machine"
-                    },
-                    {
-                        "name": "SSHCredentials",
-                        "type": "Microsoft.Compute.CredentialsCombo",
-                        "label": {
-                            "authenticationType": "Authentication type",
-                            "password": "Password",
-                            "confirmPassword": "Confirm password",
-                            "sshPublicKey": "SSH public key"
-                        },
-                        "toolTip": {
-                            "authenticationType": "Authentication Type for the Virtual Machine",
-                            "password": "Password for the Virtual Machine",
-                            "sshPublicKey": "SSH Public Key for the Virtual Machine"
-                        },
-                        "constraints": {
-                            "required": true
-                        },
-                        "options": {
-                            "hideConfirmation": false
-                        },
-                        "osPlatform": "Linux"
-                    }
-                ]
-            },
-            {
                 "name": "VirtualMachineConfig",
-                "label": "Application settings",
+                "label": "Virtual Machine Settings",
                 "subLabel": {
-                    "preValidation": "Configure the managed application",
-                    "postValidation": "Done!"
+                    "preValidation": "Configure the virtual machine's resources and settings",
+                    "postValidation": "Done"
                 },
-                "bladeTitle": "Settings",
+                "bladeTitle": "Virtual Machine Settings",
                 "elements": [
                     {
                         "name": "vmSize",
@@ -149,11 +161,12 @@
             }
         ],
         "outputs": {
-
             "location": "[location()]",
-            "adminUsername": "[steps('vmCredentials').adminUsername]",
-            "authenticationType": "[steps('vmCredentials').SSHCredentials.authenticationType]",
-            "adminPasswordOrKey": "[coalesce(steps('vmCredentials').SSHCredentials.password, steps('vmCredentials').SSHCredentials.sshPublicKey)]",
+	    "vmName": "[basics('vmName')]",
+            "dbvmName": "[basics('dbvmName')]",
+            "adminUsername": "[basics('adminUsername')]",
+            "authenticationType": "[basics('SSHCredentials').authenticationType]",
+            "adminPasswordOrKey": "[coalesce(basics('SSHCredentials').password, basics('SSHCredentials').sshPublicKey)]",
 
             "vmSize": "[steps('VirtualMachineConfig').vmSize]",
             "storageNewOrExisting": "[steps('VirtualMachineConfig').storageAccount.newOrExisting]",
@@ -164,6 +177,7 @@
             "virtualNetworkNewOrExisting": "[steps('VirtualMachineConfig').virtualNetwork.newOrExisting]",
             "virtualNetworkName": "[steps('VirtualMachineConfig').virtualNetwork.name]",
             "addressPrefix": "[steps('VirtualMachineConfig').virtualNetwork.addressPrefix]",
+            "subnetName": "[steps('VirtualMachineConfig').virtualNetwork.subnets.subnet1.name]",
             "subnetPrefix": "[steps('VirtualMachineConfig').virtualNetwork.subnets.subnet1.addressPrefix]",
             "virtualNetworkResourceGroupName": "[steps('VirtualMachineConfig').virtualNetwork.resourceGroup]",
 
