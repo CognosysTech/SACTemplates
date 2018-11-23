@@ -151,9 +151,9 @@
         "outputs": {
 
             "location": "[location()]",
-            "adminUsername": "[steps('adminUsername')]",
-            "authenticationType": "[steps('SSHCredentials').authenticationType]",
-            "adminPasswordOrKey": "[coalesce(steps('SSHCredentials').password, steps('SSHCredentials').sshPublicKey)]",
+            "adminUsername": "[steps('vmCredentials').adminUsername]",
+            "authenticationType": "[steps('vmCredentials').SSHCredentials.authenticationType]",
+            "adminPasswordOrKey": "[coalesce(steps('vmCredentials').SSHCredentials.password, steps('vmCredentials').SSHCredentials.sshPublicKey)]",
 
             "vmSize": "[steps('VirtualMachineConfig').vmSize]",
             "storageNewOrExisting": "[steps('VirtualMachineConfig').storageAccount.newOrExisting]",
