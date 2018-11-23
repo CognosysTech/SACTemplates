@@ -9,10 +9,21 @@
         "description": "User name for the Web Server VM."
       }
     },
-    "adminPassword": {
+    "authenticationType": {
+      "type": "string",
+      "defaultValue": "password",
+      "allowedValues": [
+        "password",
+        "sshPublicKey"
+      ],
+      "metadata": {
+        "description": "Type of authentication to use on the Virtual Machine."
+      }
+    },
+    "adminPasswordOrKey": {
       "type": "securestring",
       "metadata": {
-        "description": "Password for the Web Server VM."
+        "description": "Password or ssh key for the Virtual Machine."
       }
     },
     "dnsNameForPublicIP": {
@@ -38,16 +49,16 @@
     },
     "testPageTitle": {
       "type": "string",
-      "defaultValue": "Test Page",
+      "defaultValue": "Welcome",
       "metadata": {
-        "description": "Test page title."
+        "description": "Application launch will soon be complete."
       }
     },
     "testPageBody": {
       "type": "string",
       "defaultValue": "<p>This is a test page.</p>",
       "metadata": {
-        "description": "Test page content body markup."
+        "description": "Welcome to CogDAM."
       }
     },
     "installPHP": {
@@ -100,7 +111,19 @@
     "frontEndNSGName": "[concat('webnsg-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "testPageMarkup": "[concat('<html><head><title>', parameters('testPageTitle'), '</title></head><body>', parameters('PageBody'), '</body></html>')]",
     "scriptFolder": "scripts",
-    "serverPrepareScriptFileName": "prepwebserver.sh"
+    "serverPrepareScriptFileName": "prepwebserver.sh",
+    "dbserverPrepareScriptFileName": "prepdbserver.sh",
+    "linuxConfiguration": {
+      "disablePasswordAuthentication": true,
+      "ssh": {
+        "publicKeys": [
+          {
+            "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+            "keyData": "[parameters('adminPasswordOrKey')]"
+          }
+        ]
+      }
+    }
   },
   "outputs": {
     "fqdn": {
@@ -113,6 +136,20 @@
     }
   },
   "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "name": "pid-fe7abd07-a387-4638-a23f-5eefc24419a6",
+      "type": "Microsoft.Resources/deployments",
+      "properties":{
+         "mode": "Incremental",
+         "template":
+                   {
+              "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "resources":[]
+             }
+           }
+     },
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('vhdStorageName')]",
@@ -257,7 +294,8 @@
         "osProfile": {
           "computerName": "[variables('vmName')]",
           "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
+          "adminPassword": "[parameters('adminPasswordOrKey')]",
+          "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
         },
         "storageProfile": {
           "imageReference": {
@@ -267,7 +305,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmName'),'_OSDisk')]", 
+            "name": "[concat(variables('vmName'),'_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -336,7 +374,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmName'),'_OSDisk')]", 
+            "name": "[concat(variables('vmName'),'_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -368,9 +406,9 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "fileUris": [
-                "[concat(parameters('_artifactsLocation'), '/', variables('scriptFolder'), '/', variables('serverPrepareScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+                "[concat(parameters('_artifactsLocation'), '/', variables('scriptFolder'), '/', variables('dbserverPrepareScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
-              "commandToExecute": "[concat('sh prepwebserver.sh', ' ', string(parameters('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', parameters('testPage'), ' ', variables('singleQuote'), parameters('ubuntuOSVersion'), variables('singleQuote'))]"
+              "commandToExecute": "[concat('sh prepdbserver.sh', ' ', string(parameters('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', parameters('testPage'), ' ', variables('singleQuote'), parameters('ubuntuOSVersion'), variables('singleQuote'))]"
             }
           }
         }
