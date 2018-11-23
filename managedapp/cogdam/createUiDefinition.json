@@ -16,12 +16,12 @@
                     "validationMessage": "The App Name must be between 3 and 79 characters long and contain letters, numbers and hyphens only."
                 }
             },
-	    {
+	        {
                 "name": "dnsName",
                 "type": "Microsoft.Common.TextBox",
                 "label": "Application Resource name",
                 "toolTip": "The name of the DNS",
-                "defaultValue": ,
+                "defaultValue": "cgappv1",
                 "constraints": {
                     "required": true,
                     "regex": "^[a-z0-9A-Z-]{3,79}$",
@@ -89,7 +89,7 @@
         "outputs": {
             "location": "[location()]",
             "applicationResourceName": "[basics('appName')]",
-	    "dnsNameForPublicIP": "[basics('dnsName')]",
+	        "dnsNameForPublicIP": "[basics('dnsName')]",
             "adminUsername": "[basics('adminUsername')]",
             "authenticationType": "[basics('SSHCredentials').authenticationType]",
             "adminPasswordOrKey": "[coalesce(basics('SSHCredentials').password, basics('SSHCredentials').sshPublicKey)]",
