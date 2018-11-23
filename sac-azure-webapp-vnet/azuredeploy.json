@@ -1,0 +1,200 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  },
+  "variables": {
+
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('nsgName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": []
+      },
+      "resources": [ ],
+      "dependsOn": [ ]
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('infrastructureNsgName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": []
+      },
+      "resources": [ ],
+      "dependsOn": [ ]
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('vnetName')]",
+      "apiVersion": "2016-03-30",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.1.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.1.0.0/17",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+              }
+            }
+          },
+          {
+            "name": "infrastructure",
+            "properties": {
+              "addressPrefix": "10.1.254.0/24",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('infrastructureNsgName'))]"
+              }
+            }
+          },
+          {
+            "name": "GatewaySubnet",
+            "properties": {
+              "addressPrefix": "10.1.128.0/24"
+            }
+          }
+        ]
+      },
+      "resources": [ ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('infrastructureNsgName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "kind": "api",
+      "name": "[variables('gatewaySiteName')]",
+      "apiVersion": "2015-08-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "name": "[variables('gatewaySiteName')]",
+        "hostNames": [
+          "[concat(variables('gatewaySiteName'),'.azurewebsites.net')]"
+        ],
+        "enabledHostNames": [
+          "[concat(variables('gatewaySiteName'),'.azurewebsites.net')]",
+          "[concat(variables('gatewaySiteName'),'.scm.azurewebsites.net')]"
+        ],
+        "hostNameSslStates": [
+          {
+            "name": "[concat(variables('gatewaySiteName'),'.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          },
+          {
+            "name": "[concat(variables('gatewaySiteName'),'.scm.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('gatewayServerFarmName'))]"
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('gatewayServerFarmName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      },
+      "kind": "",
+      "name": "[variables('gatewayServerFarmName')]",
+      "apiVersion": "2015-08-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "name": "[variables('gatewayServerFarmName')]",
+        "numberOfWorkers": 1
+      },
+      "resources": [ ],
+      "dependsOn": [ ]
+    },
+    {
+      "name": "[variables('vnetGatewayIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },
+    {
+      "name": "[variables('vnetGatewayName')]",
+      "type": "Microsoft.Network/virtualNetworkGateways",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('vnetGatewayIpName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('vnetName'),'GatewaySubnet')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('vnetGatewayIpName'))]"
+              }
+            },
+            "name": "vnetGatewayConfig"
+          }
+        ],
+        "gatewayType": "Vpn",
+        "vpnType": "RouteBased",
+        "enableBgp": false,
+        "vpnClientConfiguration": {
+          "vpnClientAddressPool": {
+            "addressPrefixes": [
+              "172.16.201.0/24"
+            ]
+          },
+          "vpnClientRootCertificates": [
+            {
+              "name": "AppServiceCertificate.cer",
+              "properties": {
+                "PublicCertData": "[reference(concat('Microsoft.Web/sites/', variables('gatewaySiteName'), '/virtualNetworkConnections/virtualNetworkConnections')).certBlob]"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('gatewayVnetConnectionName')]",
+      "type": "Microsoft.Web/sites/virtualNetworkConnections",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', variables('gatewaySiteName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+      ],
+      "properties": {
+        "vnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+      }
+    }
+  ]
+}
