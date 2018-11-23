@@ -8,7 +8,7 @@
                 "name": "appName",
                 "type": "Microsoft.Common.TextBox",
                 "label": "Application Resource name",
-                "toolTip": "The name of the"[basics('appName')]",.",
+                "toolTip": "The name of the App",
                 "defaultValue": "cgapp",
                 "constraints": {
                     "required": true,
@@ -20,8 +20,8 @@
                 "name": "dnsName",
                 "type": "Microsoft.Common.TextBox",
                 "label": "Application Resource name",
-                "toolTip": "The name of the"[basics('dnsName')]",.",
-                "defaultValue": "cgappv1",
+                "toolTip": "The name of the DNS",
+                "defaultValue": ,
                 "constraints": {
                     "required": true,
                     "regex": "^[a-z0-9A-Z-]{3,79}$",
