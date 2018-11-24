@@ -68,7 +68,8 @@
     "OSDiskName": "[concat('webosdisk-', parameters('dnsNameForPublicIP'))]",
     "dbOSDiskName": "[concat('dbosdisk-', parameters('dnsNameForPublicIP'))]",
     "nicName": "[concat('webnic-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
-    "dbnicName": "[concat('dbnic-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
+    "domainNameLabel": "[concat(parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
+    "[concat('contosovm',uniquestring(resourceGroup().id))]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
@@ -154,7 +155,7 @@
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('dnsNameForPublicIP')]"
+          "domainNameLabel": "[parameters('domainNameLabel')]"
         }
       }
     },
