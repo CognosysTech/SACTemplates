@@ -84,7 +84,7 @@
     "serverPrepareScriptFileName": "prepwebserver.sh",
     "dbserverPrepareScriptFileName": "prepdbserver.sh",
     "testPage": "index.html",
-    "installPHP": "true";
+    "installPHP": "true",
     "testPageTitle": "Welcome",
     "testPageBody": "<p>This is a test page.</p>",
     "testPageMarkup": "[concat('<html><head><title> Welcome </title></head><body> Welcome </body></html>')]",
