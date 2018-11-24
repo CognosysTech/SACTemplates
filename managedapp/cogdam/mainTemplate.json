@@ -109,7 +109,7 @@
     "publicIPAddressType": "Dynamic",
     "vhdStorageContainerName": "vhds",
     "vmName": "[concat('webvm-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
-    "dbvmName": "[concat('dbvm-', parameters('dnsName'), 'db-', uniqueString(resourceGroup().id))]",
+    "dbvmName": "[concat('dbvm-', parameters('dnsNameForPublicIP'), 'db-', uniqueString(resourceGroup().id))]",
     "virtualNetworkName": "[concat('webvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'),  variables('subnetName'))]",
     "vhdStorageName": "[concat('webvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
