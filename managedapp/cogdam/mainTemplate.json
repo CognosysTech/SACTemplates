@@ -77,8 +77,7 @@
     "vhdStorageContainerName": "vhds",
     "vmName": "[concat('webvm-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
     "dbvmName": "[concat('dbvm-', parameters('dnsNameForPublicIP'), 'db-', uniqueString(resourceGroup().id))]",
-    "virtualNetworkName": "[concat('webvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
-    "dbvirtualNetworkName": "[concat('dbvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
+    "virtualNetworkName": "[concat('cgappvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'),  variables('subnetName'))]",
     "vhdStorageName": "[concat('cgappvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "singleQuote": "'",
@@ -224,6 +223,33 @@
     },
     {
       "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('dbfrontEndNSGName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "NSG - DB Server"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "ssh-rule",
+            "properties": {
+              "description": "Allow SSH",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "22",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicName')]",
       "location": "[parameters('location')]",
@@ -265,7 +291,7 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', parameters('dnsNameForPublicIP'))]",
-        "[concat('Microsoft.Network/virtualNetworks/', variables('dbvirtualNetworkName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('dbfrontEndNSGName'))]"
       ],
       "properties": {
@@ -281,7 +307,7 @@
           }
         ],
         "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('frontEndNSGName'))]"
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('dbfrontEndNSGName'))]"
         }
       }
      },
