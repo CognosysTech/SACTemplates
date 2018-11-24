@@ -45,7 +45,7 @@
       "metadata": {
         "description": "Base URI where artifacts required by this template are located"
       },
-       "defaultValue": "https://raw.githubusercontent.com/CognosysTech/SACTemplates/tree/master/managedapp/cogdam/"
+       "defaultValue": "https://raw.githubusercontent.com//CognosysTech/SACTemplates/master/managedapp/cogdam/"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
@@ -405,7 +405,8 @@
         "osProfile": {
           "computerName": "[variables('dbvmName')]",
           "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
+          "adminPassword": "[parameters('adminPasswordOrKey')]",
+          "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
         },
         "storageProfile": {
           "imageReference": {
@@ -430,7 +431,7 @@
       },
       "resources": [
         {
-          "name": "PrepareServer",
+          "name": "PrepareDBServer",
           "type": "extensions",
           "location": "[parameters('location')]",
           "apiVersion": "2015-06-15",
@@ -438,7 +439,7 @@
             "[concat('Microsoft.Compute/virtualMachines/', variables('dbvmName'))]"
           ],
           "tags": {
-            "displayName": "PrepareServer"
+            "displayName": "PrepareDBServer"
           },
           "properties": {
             "publisher": "Microsoft.Azure.Extensions",
