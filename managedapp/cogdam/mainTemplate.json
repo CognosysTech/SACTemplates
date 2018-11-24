@@ -380,7 +380,7 @@
               "fileUris": [
 	        "[concat(parameters('_artifactsLocation'), '/', variables('scriptFolder'), '/', variables('serverPrepareScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
-              "commandToExecute": "[concat('sh prepwebserver.sh', ' ', string(variables('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', parameters('testPage'), ' ', variables('singleQuote'), variables('ubuntuOSVersion'), variables('singleQuote'))]"
+              "commandToExecute": "[concat('sh prepwebserver.sh', ' ', string(variables('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', variables('testPage'), ' ', variables('singleQuote'), variables('ubuntuOSVersion'), variables('singleQuote'))]"
             }
           }
         }
@@ -449,7 +449,7 @@
               "fileUris": [
                 "[concat(parameters('_artifactsLocation'), '/', variables('scriptFolder'), '/', variables('dbserverPrepareScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
-              "commandToExecute": "[concat('sh prepdbserver.sh', ' ', string(variables('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', parameters('testPage'), ' ', variables('singleQuote'), variables('ubuntuOSVersion'), variables('singleQuote'))]"
+              "commandToExecute": "[concat('sh prepdbserver.sh', ' ', string(variables('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', variables('testPage'), ' ', variables('singleQuote'), variables('ubuntuOSVersion'), variables('singleQuote'))]"
             }
           }
         }
