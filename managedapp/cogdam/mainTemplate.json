@@ -154,7 +154,7 @@
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
         "dnsSettings": {
-          "domainNameLabel":  "[concat('dnsNameForPublicIP-', uniqueString(resourceGroup().id))"
+          "domainNameLabel": "[parameters('dnsNameForPublicIP')]"
         }
       }
     },
