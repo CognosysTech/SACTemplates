@@ -61,13 +61,39 @@
                 "osPlatform": "Linux"
             }
         ],
+        "steps": [
+            {
+                "name": "VirtualMachineConfig",
+                "label": "Virtual Machine Settings",
+                "subLabel": {
+                    "preValidation": "Configure the virtual machine's resources and settings",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Virtual Machine Settings",
+                "elements": [
+                    {
+                        "name": "vmSize",
+                        "type": "Microsoft.Compute.SizeSelector",
+                        "label": "Virtual machine size",
+                        "toolTip": "The size of virtual machine to provision.",
+                        "recommendedSizes": [
+                            "Standard_D2_v2",
+                            "Standard_A2_v2"
+                        ],
+                        "osPlatform": "Linux",
+                        "count": "1"
+                    }
+                ]
+            }
+        ],
         "outputs": {
             "location": "[location()]",
             "applicationResourceName": "[basics('appName')]",
 	        "dnsNameForPublicIP": "[basics('dnsName')]",
             "adminUsername": "[basics('adminUsername')]",
             "authenticationType": "[basics('SSHCredentials').authenticationType]",
-            "adminPasswordOrKey": "[coalesce(basics('SSHCredentials').password, basics('SSHCredentials').sshPublicKey)]"
+            "adminPasswordOrKey": "[coalesce(basics('SSHCredentials').password, basics('SSHCredentials').sshPublicKey)]",
+            "vmSize": "[steps('VirtualMachineConfig').vmSize]"
         }
     }
 }

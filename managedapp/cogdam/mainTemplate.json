@@ -40,6 +40,13 @@
         "description": "The Ubuntu version for the Web Server VM."
       }
     },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_A2_v2",
+      "metadata": {
+        "description": "Size for the Virtual Machine."
+      }
+    },
     "testPage": {
       "type": "string",
       "defaultValue": "index.html",
@@ -103,7 +110,6 @@
     "vhdStorageContainerName": "vhds",
     "vmName": "[concat('webvm-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
     "dbvmName": "[concat('dbvm-', parameters('dnsName'), 'db-', uniqueString(resourceGroup().id))]",
-    "vmSize": "Standard_D2_v2",
     "virtualNetworkName": "[concat('webvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'),  variables('subnetName'))]",
     "vhdStorageName": "[concat('webvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
@@ -113,6 +119,9 @@
     "scriptFolder": "scripts",
     "serverPrepareScriptFileName": "prepwebserver.sh",
     "dbserverPrepareScriptFileName": "prepdbserver.sh",
+    "testPage": "index.html",
+    "testPageTitle": "Welcome",
+    "testPageBody": "<p>This is a test page.</p>",
     "linuxConfiguration": {
       "disablePasswordAuthentication": true,
       "ssh": {
