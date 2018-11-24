@@ -80,8 +80,7 @@
     "virtualNetworkName": "[concat('webvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "dbvirtualNetworkName": "[concat('dbvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'),  variables('subnetName'))]",
-    "vhdStorageName": "[concat('webvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
-    "dbvhdStorageName": "[concat('dbvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
+    "vhdStorageName": "[concat('cgappvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "singleQuote": "'",
     "frontEndNSGName": "[concat('webnsg-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "dbfrontEndNSGName": "[concat('dbnsg-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
@@ -335,9 +334,8 @@
         "displayName": "VirtualMachine"
       },
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('dbvhdStorageName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('dbnicName'))]",
-	 "[concat('Microsoft.Storage/storageAccounts/', variables('dbvhdStorageName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', variables('vhdStorageName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('dbnicName'))]"
       ],
       "properties": {
         "hardwareProfile": {
