@@ -94,7 +94,7 @@
     "testPageTitle": "Welcome",
     "testPageBody": "<p>This is a test page.</p>",
     "testPageMarkup": "[concat('<html><head><title> Welcome </title></head><body> Welcome </body></html>')]",
-    "ubuntuOSVersion": "18.04.1-LTS",
+    "ubuntuOSVersion": "16.04.0-LTS",
     "linuxConfiguration": {
       "disablePasswordAuthentication": true,
       "ssh": {
