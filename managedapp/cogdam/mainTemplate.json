@@ -269,7 +269,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-	       "privateIPAddress": "[parameters('webprivateIPAddress')]",
+	       "privateIPAddress": "[variables('webprivateIPAddress')]",
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('dnsNameForPublicIP'))]"
               },
@@ -303,7 +303,7 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Static",
-	       "privateIPAddress": "[parameters('dbprivateIPAddress')]",
+	       "privateIPAddress": "[variables('dbprivateIPAddress')]",
               "subnet": {
                 "id": "[variables('subnetRef')]"
               }
