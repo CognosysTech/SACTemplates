@@ -33,46 +33,11 @@
         "description": "Globally unique DNS Name for the Public IP used to access the Web Server VM."
       }
     },
-    "ubuntuOSVersion": {
-      "type": "string",
-      "defaultValue": "18.04.1-LTS",
-      "metadata": {
-        "description": "The Ubuntu version for the Web Server VM."
-      }
-    },
     "vmSize": {
       "type": "string",
       "defaultValue": "Standard_A2_v2",
       "metadata": {
         "description": "Size for the Virtual Machine."
-      }
-    },
-    "testPage": {
-      "type": "string",
-      "defaultValue": "index.html",
-      "metadata": {
-        "description": "Test page you want to create on the Web Server."
-      }
-    },
-    "testPageTitle": {
-      "type": "string",
-      "defaultValue": "Welcome",
-      "metadata": {
-        "description": "Application launch will soon be complete."
-      }
-    },
-    "testPageBody": {
-      "type": "string",
-      "defaultValue": "<p>This is a test page.</p>",
-      "metadata": {
-        "description": "Welcome to CogDAM."
-      }
-    },
-    "installPHP": {
-      "type": "bool",
-      "defaultValue": true,
-      "metadata": {
-        "description": "Set to True to install PHP."
       }
     },
     "_artifactsLocation": {
@@ -115,13 +80,15 @@
     "vhdStorageName": "[concat('webvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "singleQuote": "'",
     "frontEndNSGName": "[concat('webnsg-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
-    "testPageMarkup": "[concat('<html><head><title>', parameters('testPageTitle'), '</title></head><body>', parameters('PageBody'), '</body></html>')]",
     "scriptFolder": "scripts",
     "serverPrepareScriptFileName": "prepwebserver.sh",
     "dbserverPrepareScriptFileName": "prepdbserver.sh",
     "testPage": "index.html",
+    "installPHP": "true";
     "testPageTitle": "Welcome",
     "testPageBody": "<p>This is a test page.</p>",
+    "testPageMarkup": "[concat('<html><head><title> Welcome </title></head><body> Welcome </body></html>')]",
+    "ubuntuOSVersion": "18.04.1-LTS",
     "linuxConfiguration": {
       "disablePasswordAuthentication": true,
       "ssh": {
@@ -310,7 +277,7 @@
           "imageReference": {
             "publisher": "[variables('imagePublisher')]",
             "offer": "[variables('imageOffer')]",
-            "sku": "[parameters('ubuntuOSVersion')]",
+            "sku": "[variables('ubuntuOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
@@ -348,7 +315,7 @@
               "fileUris": [
 	        "[concat(parameters('_artifactsLocation'), '/', variables('scriptFolder'), '/', variables('serverPrepareScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
-              "commandToExecute": "[concat('sh prepwebserver.sh', ' ', string(parameters('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', parameters('testPage'), ' ', variables('singleQuote'), parameters('ubuntuOSVersion'), variables('singleQuote'))]"
+              "commandToExecute": "[concat('sh prepwebserver.sh', ' ', string(variables('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', parameters('testPage'), ' ', variables('singleQuote'), variables('ubuntuOSVersion'), variables('singleQuote'))]"
             }
           }
         }
@@ -379,7 +346,7 @@
           "imageReference": {
             "publisher": "[variables('imagePublisher')]",
             "offer": "[variables('imageOffer')]",
-            "sku": "[parameters('ubuntuOSVersion')]",
+            "sku": "[variables('ubuntuOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
@@ -417,7 +384,7 @@
               "fileUris": [
                 "[concat(parameters('_artifactsLocation'), '/', variables('scriptFolder'), '/', variables('dbserverPrepareScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
-              "commandToExecute": "[concat('sh prepdbserver.sh', ' ', string(parameters('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', parameters('testPage'), ' ', variables('singleQuote'), parameters('ubuntuOSVersion'), variables('singleQuote'))]"
+              "commandToExecute": "[concat('sh prepdbserver.sh', ' ', string(variables('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', parameters('testPage'), ' ', variables('singleQuote'), variables('ubuntuOSVersion'), variables('singleQuote'))]"
             }
           }
         }
