@@ -66,7 +66,9 @@
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
     "OSDiskName": "[concat('webosdisk-', parameters('dnsNameForPublicIP'))]",
+    "dbOSDiskName": "[concat('dbosdisk-', parameters('dnsNameForPublicIP'))]",
     "nicName": "[concat('webnic-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
+    "dbnicName": "[concat('dbnic-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
     "addressPrefix": "10.0.0.0/16",
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
@@ -76,10 +78,13 @@
     "vmName": "[concat('webvm-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
     "dbvmName": "[concat('dbvm-', parameters('dnsNameForPublicIP'), 'db-', uniqueString(resourceGroup().id))]",
     "virtualNetworkName": "[concat('webvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
+    "dbvirtualNetworkName": "[concat('dbvnet-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'),  variables('subnetName'))]",
     "vhdStorageName": "[concat('webvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
+    "dbvhdStorageName": "[concat('dbvhd', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "singleQuote": "'",
     "frontEndNSGName": "[concat('webnsg-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
+    "dbfrontEndNSGName": "[concat('dbnsg-', uniqueString(resourceGroup().id, parameters('dnsNameForPublicIP')))]",
     "scriptFolder": "scripts",
     "serverPrepareScriptFileName": "prepwebserver.sh",
     "dbserverPrepareScriptFileName": "prepdbserver.sh",
@@ -330,15 +335,16 @@
         "displayName": "VirtualMachine"
       },
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('vhdStorageName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', variables('dbvhdStorageName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('dbnicName'))]",
+	 "[concat('Microsoft.Storage/storageAccounts/', variables('dbvhdStorageName'))]"
       ],
       "properties": {
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')]"
         },
         "osProfile": {
-          "computerName": "[variables('vmName')]",
+          "computerName": "[variables('dbvmName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -350,7 +356,7 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmName'),'_OSDisk')]",
+            "name": "[concat(variables('dbvmName'),'_OSDisk')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -358,7 +364,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('dbnicName'))]"
             }
           ]
         }
@@ -370,7 +376,7 @@
           "location": "[parameters('location')]",
           "apiVersion": "2015-06-15",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', variables('dbvmName'))]"
           ],
           "tags": {
             "displayName": "PrepareServer"
