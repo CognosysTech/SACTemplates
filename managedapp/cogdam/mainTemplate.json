@@ -75,7 +75,7 @@
     "webprivateIPAddress": "10.0.0.5",
     "dbprivateIPAddress": "10.0.0.6",
     "vhdStorageType": "Standard_LRS",
-    "publicIPAddressType": "Static",
+    "publicIPAddressType": "Dynamic",
     "vhdStorageContainerName": "vhds",
     "vmName": "[concat('webvm-', parameters('dnsNameForPublicIP'), '-', uniqueString(resourceGroup().id))]",
     "dbvmName": "[concat('dbvm-', parameters('dnsNameForPublicIP'), 'db-', uniqueString(resourceGroup().id))]",
