@@ -45,7 +45,7 @@
       "metadata": {
         "description": "Base URI where artifacts required by this template are located"
       },
-       "defaultValue": "https://raw.githubusercontent.com//CognosysTech/SACTemplates/master/managedapp/cogdam/"
+       "defaultValue": "https://raw.githubusercontent.com/CognosysTech/SACTemplates/master/managedapp/cogdam/"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
@@ -378,7 +378,7 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "fileUris": [
-	        "[concat(parameters('_artifactsLocation'), '/', variables('scriptFolder'), '/', variables('serverPrepareScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+	        "https://raw.githubusercontent.com/CognosysTech/SACTemplates/master/managedapp/cogdam/scripts/prepwebserver.sh"
               ],
               "commandToExecute": "[concat('sh prepwebserver.sh', ' ', string(variables('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', variables('testPage'), ' ', variables('singleQuote'), variables('ubuntuOSVersion'), variables('singleQuote'))]"
             }
@@ -448,7 +448,7 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "fileUris": [
-                "[concat(parameters('_artifactsLocation'), '/', variables('scriptFolder'), '/', variables('dbserverPrepareScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+                "https://raw.githubusercontent.com/CognosysTech/SACTemplates/master/managedapp/cogdam/scripts/prepdbserver.sh"
               ],
               "commandToExecute": "[concat('sh prepdbserver.sh', ' ', string(variables('installPHP')), ' ', variables('singleQuote'), variables('testPageMarkup'), variables('singleQuote'), ' ', variables('testPage'), ' ', variables('singleQuote'), variables('ubuntuOSVersion'), variables('singleQuote'))]"
             }
